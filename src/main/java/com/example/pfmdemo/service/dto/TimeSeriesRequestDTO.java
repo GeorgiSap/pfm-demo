@@ -1,20 +1,25 @@
 package com.example.pfmdemo.service.dto;
 
-import java.io.Serializable;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-public class TimeSeriesRequestDTO implements Serializable {
-    List<List<BigDecimal>> timeSeriesPrices;
+public class TimeSeriesRequestDTO {
+
+    @NotEmpty
+    BigDecimal[][] prices;
+
+    @NotEmpty
     List<LocalDate> dates;
 
-    public List<List<BigDecimal>> getTimeSeriesPrices() {
-        return timeSeriesPrices;
+    public BigDecimal[][] getPrices() {
+        return prices;
     }
 
-    public void setTimeSeriesPrices(List<List<BigDecimal>> timeSeriesPrices) {
-        this.timeSeriesPrices = timeSeriesPrices;
+    public void setPrices(BigDecimal[][] prices) {
+        this.prices = prices;
     }
 
     public List<LocalDate> getDates() {
@@ -23,13 +28,5 @@ public class TimeSeriesRequestDTO implements Serializable {
 
     public void setDates(List<LocalDate> dates) {
         this.dates = dates;
-    }
-
-    @Override
-    public String toString() {
-        return "TimeSeriesRequestDTO{" +
-                "timeSeriesPrices=" + timeSeriesPrices +
-                ", dates=" + dates +
-                '}';
     }
 }

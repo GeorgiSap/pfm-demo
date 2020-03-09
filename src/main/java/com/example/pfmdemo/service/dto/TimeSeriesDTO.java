@@ -3,7 +3,7 @@ package com.example.pfmdemo.service.dto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public class TimeSeriesResponseDTO {
+public class TimeSeriesDTO {
     LocalDate date;
     BigDecimal value;
 
@@ -11,7 +11,7 @@ public class TimeSeriesResponseDTO {
         return date;
     }
 
-    public TimeSeriesResponseDTO date(LocalDate date) {
+    public TimeSeriesDTO date(LocalDate date) {
         this.date = date;
         return this;
     }
@@ -24,7 +24,7 @@ public class TimeSeriesResponseDTO {
         return value;
     }
 
-    public TimeSeriesResponseDTO value(BigDecimal value) {
+    public TimeSeriesDTO value(BigDecimal value) {
         this.value = value;
         return this;
     }
