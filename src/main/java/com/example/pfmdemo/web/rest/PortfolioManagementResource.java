@@ -1,8 +1,8 @@
 package com.example.pfmdemo.web.rest;
 
 import com.example.pfmdemo.service.PortfolioManagementService;
-import com.example.pfmdemo.service.dto.TimeSeriesDTO;
 import com.example.pfmdemo.service.dto.TimeSeriesRequestDTO;
+import com.example.pfmdemo.service.dto.TimeSeriesResponseDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -14,11 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.IntStream;
 
 @RestController
 @RequestMapping("/api")
@@ -35,7 +32,7 @@ public class PortfolioManagementResource {
     }
 
     @GetMapping("portfolio-managements/time-series")
-    public ResponseEntity<List<TimeSeriesDTO>> calculateAssetTimeSeries(@Valid @RequestBody TimeSeriesRequestDTO dto) {
+    public ResponseEntity<List<TimeSeriesResponseDTO>> calculateAssetTimeSeries(@Valid @RequestBody TimeSeriesRequestDTO dto) {
         log.debug("REST request to calculate time series of a portfolio : {}, {}", dto.getPrices(), dto.getDates());
         boolean isDataLengthValid = Arrays.stream(dto.getPrices())
                 .map(price -> price.length)
@@ -43,7 +40,7 @@ public class PortfolioManagementResource {
         if (!isDataLengthValid) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, LENGHT_MISMATCH_ERROR_MESSAGE);
         }
-        List<TimeSeriesDTO> result = service.calculateAssetTimeSeries(dto.getPrices(), dto.getDates());
+        List<TimeSeriesResponseDTO> result = service.calculateAssetTimeSeries(dto.getPrices(), dto.getDates());
         return ResponseEntity.ok().body(result);
     }
 
