@@ -53,7 +53,8 @@ public class PortfolioManagementService {
     }
 
     private void validate(List<List<BigDecimal>> timeSeriesPrices, List<LocalDate> dates) {
-        if (!timeSeriesPrices.stream().map(List::size).allMatch(Integer.valueOf(dates.size())::equals)) {
+        if (!timeSeriesPrices.stream().map(List::size)
+                .allMatch(Integer.valueOf(dates.size())::equals)) {
             throw new IllegalStateException();
         }
     }
