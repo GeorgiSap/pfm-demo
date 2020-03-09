@@ -15,8 +15,6 @@ public class PortfolioManagementService {
     public static final double INITIAL_INVESTMENT = 1000;
 
     public List<TimeSeriesResponseDTO> calculateAssetTimeSeries(List<List<BigDecimal>> timeSeriesPrices, List<LocalDate> dates) {
-        validate(timeSeriesPrices, dates);
-
         List<BigDecimal> initialPrices = timeSeriesPrices.stream()
                 .map(prices -> prices.get(0))
                 .collect(Collectors.toList());
@@ -44,17 +42,12 @@ public class PortfolioManagementService {
     }
 
     private double calculateReturnRate(List<List<BigDecimal>> timeSeriesPrices, List<BigDecimal> initialPrices, double weight, List<BigDecimal> currentDatePrices) {
-        double calc = 1;
+        double returnRate = 1;
         for (int i = 0; i < timeSeriesPrices.size(); i++) {
-            calc += (currentDatePrices.get(i).doubleValue() - initialPrices.get(i).doubleValue())/initialPrices.get(i).doubleValue() * weight;
+            returnRate += (currentDatePrices.get(i).doubleValue() - initialPrices.get(i).doubleValue())/initialPrices.get(i).doubleValue() * weight;
         }
-        return calc;
+
+        return returnRate;
     }
 
-    private void validate(List<List<BigDecimal>> timeSeriesPrices, List<LocalDate> dates) {
-        if (!timeSeriesPrices.stream().map(List::size)
-                .allMatch(Integer.valueOf(dates.size())::equals)) {
-            throw new IllegalStateException();
-        }
-    }
 }
