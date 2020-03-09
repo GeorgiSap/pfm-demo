@@ -7,56 +7,54 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class PortfolioManagementService {
 
+    public static final double INITIAL_INVESTMENT = 1000;
+
     public List<TimeSeriesResponseDTO> calculateAssetTimeSeries(List<List<BigDecimal>> timeSeriesPrices, List<LocalDate> dates) {
-        if (!isValid(timeSeriesPrices, dates)) {
-            throw new IllegalStateException();
-        }
+        validate(timeSeriesPrices, dates);
 
-        BigDecimal initialPortfolioInvestment = new BigDecimal(1000);
-
-        List<BigDecimal> initialPrices = new ArrayList<>();
-        for (List<BigDecimal> timeSeriesPrice : timeSeriesPrices) {
-            initialPrices.add(timeSeriesPrice.get(0));
-        }
+        List<BigDecimal> initialPrices = timeSeriesPrices.stream()
+                .map(t -> t.get(0))
+                .collect(Collectors.toList());
 
         double weight = 1d / initialPrices.size();
 
-        List<TimeSeriesResponseDTO> result = new ArrayList<>(dates.size());
-        TimeSeriesResponseDTO timeSeriesResponseDTO = new TimeSeriesResponseDTO();
-        timeSeriesResponseDTO.setDate(dates.get(0));
-        timeSeriesResponseDTO.setValue(initialPortfolioInvestment);
-        result.add(timeSeriesResponseDTO);
-
-        for (int dateIndex = 1; dateIndex < dates.size(); dateIndex++) {
-            List<BigDecimal> currentDatePrices = new ArrayList<>();
-
-            double calc = 0;
-
-            for (List<BigDecimal> timeSeriesPrice : timeSeriesPrices) {
-                currentDatePrices.add(timeSeriesPrice.get(dateIndex));
-            }
-
-            for (int i = 0; i < timeSeriesPrices.size(); i++) {
-                calc += (currentDatePrices.get(i).doubleValue() - initialPrices.get(i).doubleValue())/initialPrices.get(i).doubleValue() * weight;
-            }
-
-            double value = (1 + calc) * initialPortfolioInvestment.doubleValue();
-
-            TimeSeriesResponseDTO timeSeriesResponseDTO1 = new TimeSeriesResponseDTO();
-            timeSeriesResponseDTO1.setDate(dates.get(dateIndex));
-            timeSeriesResponseDTO1.setValue(new BigDecimal(value));
-
-            result.add(timeSeriesResponseDTO1);
-        }
-
-        return result;
+        return  IntStream.range(0, dates.size())
+                .mapToObj(index -> calculateTimeSeries(timeSeriesPrices, dates, initialPrices, weight, index))
+                .collect(Collectors.toList());
     }
 
-    private boolean isValid(List<List<BigDecimal>> timeSeriesPrices, List<LocalDate> dates) {
-        return timeSeriesPrices.stream().map(List::size).allMatch(Integer.valueOf(dates.size())::equals);
+    private TimeSeriesResponseDTO calculateTimeSeries(List<List<BigDecimal>> timeSeriesPrices, List<LocalDate> dates, List<BigDecimal> initialPrices, double weight, int dateIndex) {
+        if (dateIndex == 0) {
+            return new TimeSeriesResponseDTO()
+                .date(dates.get(0))
+                .value(new BigDecimal(INITIAL_INVESTMENT));
+        }
+
+        List<BigDecimal> currentDatePrices = timeSeriesPrices.stream().map(t -> t.get(dateIndex)).collect(Collectors.toList());
+        double returnRate = calculateReturnRate(timeSeriesPrices, initialPrices, weight, currentDatePrices);
+
+        return new TimeSeriesResponseDTO()
+            .date(dates.get(dateIndex))
+            .value(new BigDecimal(returnRate * INITIAL_INVESTMENT));
+    }
+
+    private double calculateReturnRate(List<List<BigDecimal>> timeSeriesPrices, List<BigDecimal> initialPrices, double weight, List<BigDecimal> currentDatePrices) {
+        double calc = 1;
+        for (int i = 0; i < timeSeriesPrices.size(); i++) {
+            calc += (currentDatePrices.get(i).doubleValue() - initialPrices.get(i).doubleValue())/initialPrices.get(i).doubleValue() * weight;
+        }
+        return calc;
+    }
+
+    private void validate(List<List<BigDecimal>> timeSeriesPrices, List<LocalDate> dates) {
+        if (!timeSeriesPrices.stream().map(List::size).allMatch(Integer.valueOf(dates.size())::equals)) {
+            throw new IllegalStateException();
+        }
     }
 }

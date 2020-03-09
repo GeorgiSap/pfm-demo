@@ -11,12 +11,22 @@ public class TimeSeriesResponseDTO {
         return date;
     }
 
+    public TimeSeriesResponseDTO date(LocalDate date) {
+        this.date = date;
+        return this;
+    }
+
     public void setDate(LocalDate date) {
         this.date = date;
     }
 
     public BigDecimal getValue() {
         return value;
+    }
+
+    public TimeSeriesResponseDTO value(BigDecimal value) {
+        this.value = value;
+        return this;
     }
 
     public void setValue(BigDecimal value) {
