@@ -24,4 +24,12 @@ public class TimeSeriesRequestDTO implements Serializable {
     public void setDates(List<LocalDate> dates) {
         this.dates = dates;
     }
+
+    @Override
+    public String toString() {
+        return "TimeSeriesRequestDTO{" +
+                "timeSeriesPrices=" + timeSeriesPrices +
+                ", dates=" + dates +
+                '}';
+    }
 }

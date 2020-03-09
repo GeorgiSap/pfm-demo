@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -19,17 +18,17 @@ public class PortfolioManagementService {
         validate(timeSeriesPrices, dates);
 
         List<BigDecimal> initialPrices = timeSeriesPrices.stream()
-                .map(t -> t.get(0))
+                .map(prices -> prices.get(0))
                 .collect(Collectors.toList());
 
         double weight = 1d / initialPrices.size();
 
         return  IntStream.range(0, dates.size())
-                .mapToObj(index -> calculateTimeSeries(timeSeriesPrices, dates, initialPrices, weight, index))
+                .mapToObj(index -> calculateSingleTimeSeries(timeSeriesPrices, dates, initialPrices, weight, index))
                 .collect(Collectors.toList());
     }
 
-    private TimeSeriesResponseDTO calculateTimeSeries(List<List<BigDecimal>> timeSeriesPrices, List<LocalDate> dates, List<BigDecimal> initialPrices, double weight, int dateIndex) {
+    private TimeSeriesResponseDTO calculateSingleTimeSeries(List<List<BigDecimal>> timeSeriesPrices, List<LocalDate> dates, List<BigDecimal> initialPrices, double weight, int dateIndex) {
         if (dateIndex == 0) {
             return new TimeSeriesResponseDTO()
                 .date(dates.get(0))
