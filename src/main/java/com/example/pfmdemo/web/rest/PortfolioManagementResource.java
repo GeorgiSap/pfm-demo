@@ -7,10 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
@@ -33,7 +30,7 @@ public class PortfolioManagementResource {
         this.service = service;
     }
 
-    @GetMapping("portfolio-managements/time-series")
+    @PostMapping("portfolio-managements/time-series")
     public ResponseEntity<List<TimeSeriesResponseDTO>> calculateAssetTimeSeries(@Valid @RequestBody TimeSeriesRequestDTO dto) {
         log.debug("REST request to calculate time series of a portfolio : {}, {}", dto.getPrices(), dto.getDates());
         boolean isDataLengthValid = Arrays.stream(dto.getPrices())
