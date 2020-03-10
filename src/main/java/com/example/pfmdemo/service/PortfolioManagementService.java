@@ -16,7 +16,7 @@ public class PortfolioManagementService {
     public List<TimeSeriesResponseDTO> calculateAssetTimeSeries(BigDecimal[][] prices, List<LocalDate> dates) {
         double weight = 1d / prices.length;
         List<TimeSeriesResponseDTO> response = new ArrayList<>(dates.size());
-        response.add(new TimeSeriesResponseDTO(dates.get(0), new BigDecimal(INITIAL_INVESTMENT)));
+        response.add(new TimeSeriesResponseDTO(dates.get(0), BigDecimal.valueOf(INITIAL_INVESTMENT)));
 
         for (int col = 1; col < prices[0].length; col++) {
             double returnRate = 1;
@@ -24,7 +24,7 @@ public class PortfolioManagementService {
                 returnRate += (prices[row][col].doubleValue() - prices[row][0].doubleValue())
                         / prices[row][0].doubleValue() * weight;
             }
-            response.add(new TimeSeriesResponseDTO(dates.get(col), new BigDecimal(INITIAL_INVESTMENT * returnRate)));
+            response.add(new TimeSeriesResponseDTO(dates.get(col), BigDecimal.valueOf(INITIAL_INVESTMENT * returnRate)));
         }
         return response;
     }

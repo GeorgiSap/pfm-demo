@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -40,7 +42,9 @@ public class PortfolioManagementResource {
         if (!isDataLengthValid) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, LENGHT_MISMATCH_ERROR_MESSAGE);
         }
-        List<TimeSeriesResponseDTO> result = service.calculateAssetTimeSeries(dto.getPrices(), dto.getDates());
+        List<TimeSeriesResponseDTO> result = service.calculateAssetTimeSeries(dto.getPrices(), dto.getDates()).stream()
+                .map(entry -> new TimeSeriesResponseDTO(entry.getDate(), entry.getValue().setScale(2, RoundingMode.HALF_UP)))
+                .collect(Collectors.toList());
         return ResponseEntity.ok().body(result);
     }
 
